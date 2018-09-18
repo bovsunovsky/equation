@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+       <title>Решение квадратного уравнения</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <link href="normalize.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+<div class="demo-text">
+    <p> Квадратное уравнение, это уравнение вида :<object type="image/svg+xml" data="img/7.svg" width="115" height="39">
+        <img src="img/7.png" width="133" height="30" alt="картинка в формате PNG">
+    </object>. </p>
+<p> Для решеения Вашего уравнения , приведите его к указанному виду и введите значения ниже:</p>
+
+    <form name="myForma" action="javascript:myFunction()" >
+        <input name="a" class="aa" type="text" pattern="-?\d+\.?\d*" placeholder="a" value="" size="3">
+        <object type="image/svg+xml" data="img/6.svg" width="24" height="32"><img src="img/6.png"></object><b class="demo-text-b">+</b>
+    <input name="b" class="bb" type="text" pattern="-?\d+\.?\d*" placeholder="b" value="" size="3">
+        <object  type="image/svg+xml" data="img/5.svg" width="20" height="32"><img src="img/5.png"></object><b class="demo-text-b">+</b>
+    <input name="c" class="cc" type="text" pattern="-?\d+\.?\d*" placeholder="c" value="" size="3"><b class="demo-text-b">=0</b>
+    <input type="submit" class="btn" value="Вычислить"   >
+
+</form>
+
+</div>
+<div class="demo-container"></div>
+<div id="placeholder" class="demo-placeholder" > </div>
+
+<script src="jquery.js"></script>
+<script src="jquery.flot.js"></script>
+
+<script>
+$(document).ready(doFlot());
+    function doFlot() {
+        var a = Number($('.aa').val());
+        var b = Number($('.bb').val());
+        var c = Number($('.cc').val());
+        var mi = Number((1*((-1*b/(2*a)).toFixed(0)))-20);
+        var ma = Number((1*((-1*b/(2*a)).toFixed(0)))+20);
+        var yv = a*mi*mi+b*mi+c;
+        var fun = [];
+
+        for ( var i = mi; i < ma; i = i + 1) {
+         var  g = a*i*i+b*i+c ;
+            fun.push([i,g]);
+            if(a > 0){
+                if(yv > g){ yv = g ;  }
+            } else if (a < 0) {
+                if(yv < g) { yv = g ;}
+            } else yv = 0;
+        }
+        var plot = $.plot("#placeholder", [
+            { data: fun, label: "Y="+a+"x<sup>2</sup>+"+b+"x+"+c}
+        ], {
+            series: {
+                lines: {
+                    show: true
+                },
+                points: {
+                    show: false
+                }
+            },
+            grid: {
+                hoverable: true,
+                clickable: true
+            },
+            yaxis: {
+                min: yv-500,
+                max: yv+500
+            }
+        });
+
+        $("<div id='tooltip'></div>").css({
+            position: "absolute",
+            display: "none",
+            border: "1px solid #fdd",
+            padding: "2px",
+            "background-color": "#fee",
+            opacity: 0.80
+        }).appendTo("body");
+
+        $("#placeholder").bind("plothover", function (event, pos, item) {
+
+            if (item) {
+                var x = item.datapoint[0].toFixed(2),
+                    y = item.datapoint[1].toFixed(2);
+
+                $("#tooltip").html(  " При Х= " + x + " Y = " + y)
+                    .css({top: item.pageY+5, left: item.pageX+5})
+                    .fadeIn(200);
+            } else {
+                $("#tooltip").hide();
+            }
+
+        });
+
+
+
+
+    }
+
+</script>
+<script src="my.js"></script>
+
+
+</body>
+</html>
